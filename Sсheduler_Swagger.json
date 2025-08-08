@@ -1,0 +1,1031 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "FLB Backup Scheduler",
+		"version": "1.9.5"
+	},
+	"paths": {
+		"/v1/Scheduler/backup/": {
+			"post": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Create Schedule",
+				"description": "Create Schedule",
+				"operationId": "create_schedule_v1_Scheduler_backup__post",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchedulerTaskCreate"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SchedulerTaskResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "List Schedule",
+				"description": "Get all Schedule",
+				"operationId": "list_schedule_v1_Scheduler_backup__get",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "sortBy",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/SortByEnum",
+							"default": "staskId"
+						}
+					},
+					{
+						"name": "sortOrder",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/OrderEnum",
+							"default": "asc"
+						}
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 1,
+							"title": "Page"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 10,
+							"title": "Limit"
+						}
+					},
+					{
+						"name": "searchQ",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"default": "",
+							"title": "Searchq"
+						}
+					},
+					{
+						"name": "active",
+						"in": "query",
+						"required": false,
+						"schema": {
+							"anyOf": [
+								{
+									"$ref": "#/components/schemas/StatusEnum"
+								},
+								{
+									"type": "null"
+								}
+							],
+							"default": "true",
+							"title": "Active"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ListSchedulerTaskResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Schedule Delete",
+				"description": "Delete Scheduler Tasks",
+				"operationId": "schedule_delete_v1_Scheduler_backup__delete",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "array",
+								"items": {
+									"type": "integer"
+								},
+								"title": "Stask Ids"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/Scheduler/backup/{staskId}/": {
+			"get": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Schedule Detail",
+				"description": "Get Scheduler Task",
+				"operationId": "schedule_detail_v1_Scheduler_backup__staskId___get",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "staskId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"title": "Staskid"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SchedulerTaskResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Schedule Update",
+				"description": "Update Scheduler Task",
+				"operationId": "schedule_update_v1_Scheduler_backup__staskId___put",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "staskId",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"title": "Staskid"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchedulerTaskUpdate"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SchedulerTaskResponse"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/Scheduler/backup/deactivate/": {
+			"patch": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Schedule Deactivate",
+				"description": "Deactivate Scheduler Tasks",
+				"operationId": "schedule_deactivate_v1_Scheduler_backup_deactivate__patch",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"type": "integer"
+								},
+								"type": "array",
+								"title": "Stask Ids"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"JWT Token": []
+					}
+				]
+			}
+		},
+		"/v1/Scheduler/backup/activate/": {
+			"patch": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Schedule Activate",
+				"description": "Activate Scheduler Tasks",
+				"operationId": "schedule_activate_v1_Scheduler_backup_activate__patch",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"type": "integer"
+								},
+								"type": "array",
+								"title": "Stask Ids"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"JWT Token": []
+					}
+				]
+			}
+		},
+		"/v1/Scheduler/backup/makeBackup/": {
+			"post": {
+				"tags": [
+					"Scheduler Backup (FLB agent)"
+				],
+				"summary": "Create Backup Task",
+				"description": "Create Once Backup Scheduler task",
+				"operationId": "create_backup_task_v1_Scheduler_backup_makeBackup__post",
+				"security": [
+					{
+						"JWT Token": []
+					}
+				],
+				"parameters": [
+					{
+						"name": "staskId",
+						"in": "query",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"title": "Staskid"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/v1/Scheduler/restore/": {
+			"post": {
+				"tags": [
+					"Scheduler Restore (FLB agent)"
+				],
+				"summary": "Create Restore Task",
+				"description": "Create Restore Scheduler task",
+				"operationId": "create_restore_task_v1_Scheduler_restore__post",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RestoreTask"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"201": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"422": {
+						"description": "Validation Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPValidationError"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"JWT Token": []
+					}
+				]
+			}
+		},
+		"/v1/Scheduler/healthcheck": {
+			"get": {
+				"tags": [
+					"healthcheck"
+				],
+				"summary": "Healthcheck",
+				"operationId": "healthcheck_v1_Scheduler_healthcheck_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HealthcheckResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"HTTPValidationError": {
+				"properties": {
+					"detail": {
+						"items": {
+							"$ref": "#/components/schemas/ValidationError"
+						},
+						"type": "array",
+						"title": "Detail"
+					}
+				},
+				"type": "object",
+				"title": "HTTPValidationError"
+			},
+			"HealthcheckResponse": {
+				"properties": {
+					"app_status": {
+						"type": "string",
+						"title": "App Status",
+						"default": "App is up and running"
+					},
+					"db_status": {
+						"type": "string",
+						"title": "Db Status"
+					}
+				},
+				"type": "object",
+				"required": [
+					"db_status"
+				],
+				"title": "HealthcheckResponse"
+			},
+			"ListSchedulerTaskResponse": {
+				"properties": {
+					"page": {
+						"type": "integer",
+						"title": "Page",
+						"default": 1
+					},
+					"limit": {
+						"type": "integer",
+						"title": "Limit",
+						"default": 10
+					},
+					"count": {
+						"type": "integer",
+						"title": "Count",
+						"default": 0
+					},
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/SchedulerTaskResponse"
+						},
+						"type": "array",
+						"title": "Data"
+					}
+				},
+				"type": "object",
+				"required": [
+					"data"
+				],
+				"title": "ListSchedulerTaskResponse"
+			},
+			"OrderEnum": {
+				"type": "string",
+				"enum": [
+					"asc",
+					"desc"
+				],
+				"title": "OrderEnum"
+			},
+			"RestoreParams": {
+				"properties": {
+					"snapshotId": {
+						"type": "string",
+						"title": "Snapshotid"
+					},
+					"targetPath": {
+						"type": "string",
+						"title": "Targetpath"
+					},
+					"recoverPath": {
+						"anyOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Recoverpath",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"required": [
+					"snapshotId",
+					"targetPath"
+				],
+				"title": "RestoreParams"
+			},
+			"RestoreTask": {
+				"properties": {
+					"clientId": {
+						"type": "integer",
+						"title": "Clientid"
+					},
+					"repoId": {
+						"type": "integer",
+						"title": "Repoid"
+					},
+					"repoFolder": {
+						"type": "string",
+						"title": "Repofolder"
+					},
+					"restoreData": {
+						"items": {
+							"$ref": "#/components/schemas/RestoreParams"
+						},
+						"type": "array",
+						"title": "Restoredata"
+					}
+				},
+				"type": "object",
+				"required": [
+					"clientId",
+					"repoId",
+					"repoFolder",
+					"restoreData"
+				],
+				"title": "RestoreTask"
+			},
+			"ScheduleSetting": {
+				"properties": {
+					"day": {
+						"type": "integer",
+						"title": "Day"
+					},
+					"hour": {
+						"type": "integer",
+						"title": "Hour"
+					},
+					"min": {
+						"type": "integer",
+						"title": "Min"
+					}
+				},
+				"type": "object",
+				"required": [
+					"day",
+					"hour",
+					"min"
+				],
+				"title": "ScheduleSetting"
+			},
+			"SchedulerTaskCreate": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"title": "Name"
+					},
+					"description": {
+						"type": "string",
+						"title": "Description"
+					},
+					"schedType": {
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"daily"
+								],
+								"const": "daily"
+							},
+							{
+								"type": "string",
+								"enum": [
+									"weekly"
+								],
+								"const": "weekly"
+							}
+						],
+						"title": "Schedtype"
+					},
+					"scheduler": {
+						"items": {
+							"$ref": "#/components/schemas/ScheduleSetting"
+						},
+						"type": "array",
+						"title": "Scheduler"
+					},
+					"clientList": {
+						"items": {
+							"type": "integer"
+						},
+						"type": "array",
+						"title": "Clientlist"
+					},
+					"storageId": {
+						"type": "integer",
+						"title": "Storageid"
+					},
+					"backupDefId": {
+						"type": "integer",
+						"title": "Backupdefid"
+					}
+				},
+				"type": "object",
+				"required": [
+					"name",
+					"description",
+					"schedType",
+					"scheduler",
+					"clientList",
+					"storageId",
+					"backupDefId"
+				],
+				"title": "SchedulerTaskCreate"
+			},
+			"SchedulerTaskResponse": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"title": "Name"
+					},
+					"description": {
+						"type": "string",
+						"title": "Description"
+					},
+					"schedType": {
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"daily"
+								],
+								"const": "daily"
+							},
+							{
+								"type": "string",
+								"enum": [
+									"weekly"
+								],
+								"const": "weekly"
+							}
+						],
+						"title": "Schedtype"
+					},
+					"scheduler": {
+						"items": {
+							"$ref": "#/components/schemas/ScheduleSetting"
+						},
+						"type": "array",
+						"title": "Scheduler"
+					},
+					"staskId": {
+						"type": "integer",
+						"title": "Staskid"
+					},
+					"ownerId": {
+						"type": "integer",
+						"title": "Ownerid"
+					},
+					"clientList": {
+						"items": {
+							"type": "integer"
+						},
+						"type": "array",
+						"title": "Clientlist"
+					},
+					"storageId": {
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Storageid"
+					},
+					"backupDefId": {
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Backupdefid"
+					},
+					"storage": {
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Storage",
+						"default": {}
+					},
+					"bkpdef": {
+						"anyOf": [
+							{
+								"type": "object"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Bkpdef",
+						"default": {}
+					},
+					"clients": {
+						"anyOf": [
+							{
+								"items": {
+									"type": "object"
+								},
+								"type": "array"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Clients",
+						"default": []
+					},
+					"creationTime": {
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Creationtime"
+					},
+					"updatedTime": {
+						"anyOf": [
+							{
+								"type": "integer"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Updatedtime"
+					},
+					"active": {
+						"anyOf": [
+							{
+								"type": "boolean"
+							},
+							{
+								"type": "null"
+							}
+						],
+						"title": "Active",
+						"default": true
+					},
+					"valid": {
+						"type": "boolean",
+						"title": "Valid",
+						"readOnly": true
+					}
+				},
+				"type": "object",
+				"required": [
+					"name",
+					"description",
+					"schedType",
+					"scheduler",
+					"staskId",
+					"ownerId",
+					"clientList",
+					"storageId",
+					"backupDefId",
+					"valid"
+				],
+				"title": "SchedulerTaskResponse"
+			},
+			"SchedulerTaskUpdate": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"title": "Name"
+					},
+					"description": {
+						"type": "string",
+						"title": "Description"
+					},
+					"schedType": {
+						"anyOf": [
+							{
+								"type": "string",
+								"enum": [
+									"daily"
+								],
+								"const": "daily"
+							},
+							{
+								"type": "string",
+								"enum": [
+									"weekly"
+								],
+								"const": "weekly"
+							}
+						],
+						"title": "Schedtype"
+					},
+					"scheduler": {
+						"items": {
+							"$ref": "#/components/schemas/ScheduleSetting"
+						},
+						"type": "array",
+						"title": "Scheduler"
+					},
+					"clientList": {
+						"items": {
+							"type": "integer"
+						},
+						"type": "array",
+						"title": "Clientlist"
+					},
+					"storageId": {
+						"type": "integer",
+						"title": "Storageid"
+					},
+					"backupDefId": {
+						"type": "integer",
+						"title": "Backupdefid"
+					}
+				},
+				"type": "object",
+				"required": [
+					"name",
+					"description",
+					"schedType",
+					"scheduler",
+					"clientList",
+					"storageId",
+					"backupDefId"
+				],
+				"title": "SchedulerTaskUpdate"
+			},
+			"SortByEnum": {
+				"type": "string",
+				"enum": [
+					"staskId",
+					"name",
+					"updatedTime",
+					"creationTime"
+				],
+				"title": "SortByEnum"
+			},
+			"StatusEnum": {
+				"type": "string",
+				"enum": [
+					"true",
+					"false",
+					"all"
+				],
+				"title": "StatusEnum"
+			},
+			"ValidationError": {
+				"properties": {
+					"loc": {
+						"items": {
+							"anyOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "integer"
+								}
+							]
+						},
+						"type": "array",
+						"title": "Location"
+					},
+					"msg": {
+						"type": "string",
+						"title": "Message"
+					},
+					"type": {
+						"type": "string",
+						"title": "Error Type"
+					}
+				},
+				"type": "object",
+				"required": [
+					"loc",
+					"msg",
+					"type"
+				],
+				"title": "ValidationError"
+			}
+		},
+		"securitySchemes": {
+			"JWT Token": {
+				"type": "apiKey",
+				"in": "header",
+				"name": "x-jwt-token"
+			}
+		}
+	}
+}
