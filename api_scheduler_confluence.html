@@ -1,0 +1,667 @@
+<ac:layout>
+    <ac:layout-section ac:type="two_equal">
+        <ac:layout-cell>
+            <p>
+                <ac:structured-macro ac:name="toc" ac:schema-version="1" />
+            </p>
+            <p>
+                <ac:structured-macro ac:name="status" ac:schema-version="1">
+                    <ac:parameter ac:name="colour">Red</ac:parameter>
+                    <ac:parameter ac:name="title">в работе</ac:parameter>
+                </ac:structured-macro>
+            </p>
+        </ac:layout-cell>
+        <ac:layout-cell>
+            <ac:structured-macro ac:name="expand" ac:schema-version="1">
+                <ac:parameter ac:name="title">История изменений</ac:parameter>
+                <ac:rich-text-body>
+                    <table class="wrapped relative-table" style="width: 100%;">
+                        <tbody>
+                            <tr>
+                                <th>Версия</th>
+                                <th>Дата</th>
+                                <th>Автор</th>
+                                <th>Описание изменений</th>
+                                <th>Задача</th>
+                            </tr>
+                            <tr>
+                                <td>1.0</td>
+                                <td><time datetime="2025-08-08" /></td>
+                                <td>
+                                    <ac:link>
+                                        <ri:user ri:userkey="2c92808294b39cee01954182dad2020d" />
+                                    </ac:link>
+                                </td>
+                                <td>Сформирована первая версия<br />документа</td>
+                                <td>
+                                    <ac:structured-macro ac:name="jira" ac:schema-version="1">
+                                        <ac:parameter ac:name="server">Jira</ac:parameter>
+                                        <ac:parameter ac:name="serverId">9080ac5a-b1e6-327d-9d7d-d207f86dcf31</ac:parameter>
+                                        <ac:parameter ac:name="key">SUOP-2635</ac:parameter>
+                                    </ac:structured-macro>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+        </ac:layout-cell>
+    </ac:layout-section>
+    <ac:layout-section ac:type="single">
+        <ac:layout-cell>
+            <hr />
+            <h1>Общее</h1>
+            <p>FLB Backup Scheduler предоставляет API для управления задачами резервного копирования и восстановления.</p>
+            <h1>Аутентификация</h1>
+            <p>Для аутентификации требуется JWT Token (передается в заголовке <code>x-jwt-token</code>).</p>
+            <h1>Используемые API-методы</h1>
+            <h2>Backup Scheduler</h2>
+
+            <h3>POST /v1/Scheduler/backup/ — Создать расписание</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>RequestBody:</strong> application/json, схема <code>SchedulerTaskCreate</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Обяз.</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>name</td>
+                                        <td>string</td>
+                                        <td>*</td>
+                                        <td>Название задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>backupDefId</td>
+                                        <td>integer</td>
+                                        <td>*</td>
+                                        <td>ID шаблона резервного копирования</td>
+                                    </tr>
+                                    <tr>
+                                        <td>description</td>
+                                        <td>string</td>
+                                        <td></td>
+                                        <td>Описание задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>schedType</td>
+                                        <td>string</td>
+                                        <td></td>
+                                        <td>Тип расписания (например, daily, weekly)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>scheduler</td>
+                                        <td>object</td>
+                                        <td></td>
+                                        <td>Параметры расписания (день, час, минута)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>clientList</td>
+                                        <td>array</td>
+                                        <td></td>
+                                        <td>Список идентификаторов клиентов</td>
+                                    </tr>
+                                    <tr>
+                                        <td>storageId</td>
+                                        <td>integer</td>
+                                        <td></td>
+                                        <td>ID хранилища для резервной копии</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>201:</strong> application/json, схема <code>SchedulerTaskResponse</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>staskId</td>
+                                        <td>integer</td>
+                                        <td>ID созданной задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>status</td>
+                                        <td>string</td>
+                                        <td>Статус задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>createdAt</td>
+                                        <td>string (datetime)</td>
+                                        <td>Дата создания</td>
+                                    </tr>
+                                    <tr>
+                                        <td>updatedAt</td>
+                                        <td>string (datetime)</td>
+                                        <td>Дата обновления</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>detail</td>
+                                        <td>array</td>
+                                        <td>Список ошибок валидации</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Параметры запроса</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Обяз.</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>name</td>
+                                        <td>string</td>
+                                        <td>*</td>
+                                        <td>Название задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>backupDefId</td>
+                                        <td>integer</td>
+                                        <td>*</td>
+                                        <td>ID шаблона резервного копирования</td>
+                                    </tr>
+                                    <tr>
+                                        <td>description</td>
+                                        <td>string</td>
+                                        <td></td>
+                                        <td>Описание задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>schedType</td>
+                                        <td>string</td>
+                                        <td></td>
+                                        <td>Тип расписания (например, daily, weekly)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>scheduler</td>
+                                        <td>object</td>
+                                        <td></td>
+                                        <td>Параметры расписания (день, час, минута)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>clientList</td>
+                                        <td>array</td>
+                                        <td></td>
+                                        <td>Список идентификаторов клиентов</td>
+                                    </tr>
+                                    <tr>
+                                        <td>storageId</td>
+                                        <td>integer</td>
+                                        <td></td>
+                                        <td>ID хранилища для резервной копии</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>201</td>
+                                        <td>Успешное создание задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>422</td>
+                                        <td>Ошибка валидации</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>GET /v1/Scheduler/backup/ — Получить список расписаний</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Параметры:</strong>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                        <th>Значение по умолчанию</th>
+                                    </tr>
+                                    <tr>
+                                        <td>sortBy</td>
+                                        <td>string</td>
+                                        <td>Поле сортировки (staskId, name, updatedTime, creationTime)</td>
+                                        <td>staskId</td>
+                                    </tr>
+                                    <tr>
+                                        <td>sortOrder</td>
+                                        <td>string</td>
+                                        <td>Порядок сортировки (asc, desc)</td>
+                                        <td>asc</td>
+                                    </tr>
+                                    <tr>
+                                        <td>page</td>
+                                        <td>integer</td>
+                                        <td>Номер страницы</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>limit</td>
+                                        <td>integer</td>
+                                        <td>Количество элементов на странице</td>
+                                        <td>10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>searchQ</td>
+                                        <td>string</td>
+                                        <td>Строка поиска</td>
+                                        <td>""</td>
+                                    </tr>
+                                    <tr>
+                                        <td>active</td>
+                                        <td>string</td>
+                                        <td>Статус активности (true, false, all)</td>
+                                        <td>true</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, схема <code>ListSchedulerTaskResponse</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>items</td>
+                                        <td>array</td>
+                                        <td>Список задач расписания</td>
+                                    </tr>
+                                    <tr>
+                                        <td>total</td>
+                                        <td>integer</td>
+                                        <td>Общее количество задач</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>DELETE /v1/Scheduler/backup/ — Удалить задачи расписания</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>RequestBody:</strong> application/json, массив целых чисел (staskId)
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>array[integer]</td>
+                                        <td>Список идентификаторов задач для удаления</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, пустой объект<br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>GET /v1/Scheduler/backup/{staskId}/ — Получить детали задачи</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Параметры пути</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Обяз.</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>staskId</td>
+                                        <td>integer</td>
+                                        <td>*</td>
+                                        <td>ID задачи расписания</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, схема <code>SchedulerTaskResponse</code><br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>PUT /v1/Scheduler/backup/{staskId}/ — Обновить задачу расписания</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Параметры пути</th>
+                        <th>RequestBody</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Обяз.</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>staskId</td>
+                                        <td>integer</td>
+                                        <td>*</td>
+                                        <td>ID задачи расписания</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            application/json, схема <code>SchedulerTaskUpdate</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>name</td>
+                                        <td>string</td>
+                                        <td>Новое название задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>description</td>
+                                        <td>string</td>
+                                        <td>Описание задачи</td>
+                                    </tr>
+                                    <tr>
+                                        <td>schedType</td>
+                                        <td>string</td>
+                                        <td>Тип расписания</td>
+                                    </tr>
+                                    <tr>
+                                        <td>scheduler</td>
+                                        <td>object</td>
+                                        <td>Параметры расписания</td>
+                                    </tr>
+                                    <tr>
+                                        <td>clientList</td>
+                                        <td>array</td>
+                                        <td>Список клиентов</td>
+                                    </tr>
+                                    <tr>
+                                        <td>storageId</td>
+                                        <td>integer</td>
+                                        <td>ID хранилища</td>
+                                    </tr>
+                                    <tr>
+                                        <td>backupDefId</td>
+                                        <td>integer</td>
+                                        <td>ID шаблона резервного копирования</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, схема <code>SchedulerTaskResponse</code><br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>PATCH /v1/Scheduler/backup/deactivate/ — Деактивировать задачи</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>RequestBody</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            application/json, массив целых чисел (staskId)
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>array[integer]</td>
+                                        <td>Список идентификаторов задач для деактивации</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, пустой объект<br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>PATCH /v1/Scheduler/backup/activate/ — Активировать задачи</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>RequestBody</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            application/json, массив целых чисел (staskId)
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>array[integer]</td>
+                                        <td>Список идентификаторов задач для активации</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, пустой объект<br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>POST /v1/Scheduler/backup/makeBackup/ — Создать задачу резервного копирования</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Обяз.</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>staskId</td>
+                                        <td>integer</td>
+                                        <td>*</td>
+                                        <td>ID задачи для резервного копирования</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>200:</strong> application/json, пустой объект<br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Restore Scheduler</h2>
+            <h3>POST /v1/Scheduler/restore/ — Создать задачу восстановления</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>RequestBody</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            application/json, схема <code>RestoreTask</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>clientId</td>
+                                        <td>integer</td>
+                                        <td>ID клиента для восстановления</td>
+                                    </tr>
+                                    <tr>
+                                        <td>repoId</td>
+                                        <td>integer</td>
+                                        <td>ID репозитория</td>
+                                    </tr>
+                                    <tr>
+                                        <td>repoFolder</td>
+                                        <td>string</td>
+                                        <td>Папка репозитория</td>
+                                    </tr>
+                                    <tr>
+                                        <td>restoreData</td>
+                                        <td>array</td>
+                                        <td>Данные для восстановления (snapshotId, targetPath, recoverPath)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <strong>201:</strong> application/json, пустой объект<br>
+                            <strong>422:</strong> application/json, схема <code>HTTPValidationError</code>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Healthcheck</h2>
+            <h3>GET /v1/Scheduler/healthcheck — Проверка состояния сервиса</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>200:</strong> application/json, схема <code>HealthcheckResponse</code>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>Имя</th>
+                                        <th>Тип</th>
+                                        <th>Описание</th>
+                                    </tr>
+                                    <tr>
+                                        <td>app_status</td>
+                                        <td>string</td>
+                                        <td>Статус приложения</td>
+                                    </tr>
+                                    <tr>
+                                        <td>db_status</td>
+                                        <td>string</td>
+                                        <td>Статус базы данных</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </ac:layout-cell>
+    </ac:layout-section>
+</ac:layout>
