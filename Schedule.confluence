@@ -1,0 +1,984 @@
+<ac:layout>
+    <ac:layout-section ac:type="two_equal">
+        <ac:layout-cell>
+            <ac:structured-macro ac:name="toc" ac:schema-version="1" ac:macro-id="flb-toc-001" />
+            <ac:structured-macro ac:name="status" ac:schema-version="1" ac:macro-id="flb-status-001">
+                <ac:parameter ac:name="colour">Red</ac:parameter>
+                <ac:parameter ac:name="title">в работе</ac:parameter>
+            </ac:structured-macro>
+        </ac:layout-cell>
+        <ac:layout-cell>
+            <ac:structured-macro ac:name="expand" ac:schema-version="1" ac:macro-id="flb-expand-001">
+                <ac:parameter ac:name="title">История изменений</ac:parameter>
+                <ac:rich-text-body>
+                    <table class="wrapped relative-table" style="width: 86.898%;">
+                        <tbody>
+                            <tr>
+                                <th>Версия</th>
+                                <th>Дата</th>
+                                <th>Автор</th>
+                                <th>Описание изменений</th>
+                                <th>Задача</th>
+                            </tr>
+                            <tr>
+                                <td>1.0</td>
+                                <td><time datetime="2025-08-09" /></td>
+                                <td>
+                                    <ac:link>
+                                        <ri:user ri:userkey="2c92808294b39cee01954182dad2020d" />
+                                    </ac:link>
+                                </td>
+                                <td>Перенос документации FLB Backup Scheduler в эталонный формат</td>
+                                <td>
+                                    <ac:structured-macro ac:name="jira" ac:schema-version="1" ac:macro-id="flb-jira-001">
+                                        <ac:parameter ac:name="server">Jira</ac:parameter>
+                                        <ac:parameter ac:name="serverId">9080ac5a-b1e6-327d-9d7d-d207f86dcf31</ac:parameter>
+                                        <ac:parameter ac:name="key">SUOP-2635</ac:parameter>
+                                    </ac:structured-macro>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ac:rich-text-body>
+            </ac:structured-macro>
+        </ac:layout-cell>
+    </ac:layout-section>
+    <ac:layout-section ac:type="single">
+        <ac:layout-cell>
+            <hr />
+            <h1>Общее</h1>
+            <p>FLB Backup Scheduler предоставляет API для управления задачами резервного копирования и восстановления.</p>
+            <h1>Аутентификация</h1>
+            <p>Для доступа к API требуется JWT-токен в заголовке <code>x-jwt-token</code>.</p>
+            <h1>API-методы FLB Backup Scheduler (версия 1.9.5)</h1>
+
+            <!-- ========== Создание расписания ========== -->
+            <h2>Создание расписания</h2>
+            <h3>POST /v1/Scheduler/backup/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+POST /v1/Scheduler/backup/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "name": "Daily Backup",
+  "description": "Backup every day at 2:00",
+  "schedType": "daily",
+  "scheduler": [{ "day": 0, "hour": 2, "min": 0 }],
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 201 Created
+Content-Type: application/json
+{
+  "name": "Daily Backup",
+  "description": "Backup every day at 2:00",
+  "schedType": "daily",
+  "scheduler": [{ "day": 0, "hour": 2, "min": 0 }],
+  "staskId": 123,
+  "ownerId": 1,
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5,
+  "valid": true,
+  "active": true
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>name</td><td>body</td><td>*</td><td>string</td><td>Название задачи</td></tr>
+                                    <tr><td>2</td><td>description</td><td>body</td><td>*</td><td>string</td><td>Описание задачи</td></tr>
+                                    <tr><td>3</td><td>schedType</td><td>body</td><td>*</td><td>string</td><td>Тип расписания</td></tr>
+                                    <tr><td>4</td><td>scheduler</td><td>body</td><td>*</td><td>array</td><td>Массив расписаний (day, hour, min)</td></tr>
+                                    <tr><td>5</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список ID клиентов</td></tr>
+                                    <tr><td>6</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>7</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>name</td><td>body</td><td>*</td><td>string</td><td>Название задачи</td></tr>
+                                    <tr><td>2</td><td>description</td><td>body</td><td>*</td><td>string</td><td>Описание задачи</td></tr>
+                                    <tr><td>3</td><td>schedType</td><td>body</td><td>*</td><td>string</td><td>Тип расписания</td></tr>
+                                    <tr><td>4</td><td>scheduler</td><td>body</td><td>*</td><td>array</td><td>Массив расписаний</td></tr>
+                                    <tr><td>5</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи</td></tr>
+                                    <tr><td>6</td><td>ownerId</td><td>body</td><td>*</td><td>integer</td><td>ID владельца</td></tr>
+                                    <tr><td>7</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список клиентов</td></tr>
+                                    <tr><td>8</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>9</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                    <tr><td>10</td><td>valid</td><td>body</td><td>*</td><td>boolean</td><td>Валидность задачи</td></tr>
+                                    <tr><td>11</td><td>active</td><td>body</td><td></td><td>boolean</td><td>Активность задачи</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>201</td><td>Created</td><td>Задача успешно создана</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Список расписаний ========== -->
+            <h2>Список расписаний</h2>
+            <h3>GET /v1/Scheduler/backup/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+GET /v1/Scheduler/backup/?sortBy=name&sortOrder=asc&page=1&limit=10&searchQ=backup&active=true
+x-jwt-token: <token>
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "page": 1,
+  "limit": 10,
+  "count": 2,
+  "data": [
+    {
+      "name": "Daily Backup",
+      "description": "Backup every day at 2:00",
+      "schedType": "daily",
+      "scheduler": [{ "day": 0, "hour": 2, "min": 0 }],
+      "staskId": 123,
+      "ownerId": 1,
+      "clientList": [1,2],
+      "storageId": 10,
+      "backupDefId": 5,
+      "valid": true,
+      "active": true
+    }
+  ]
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>sortBy</td><td>query</td><td></td><td>string</td><td>Сортировка (staskId, name, updatedTime, creationTime)</td></tr>
+                                    <tr><td>2</td><td>sortOrder</td><td>query</td><td></td><td>string</td><td>Порядок сортировки (asc/desc)</td></tr>
+                                    <tr><td>3</td><td>page</td><td>query</td><td></td><td>integer</td><td>Номер страницы</td></tr>
+                                    <tr><td>4</td><td>limit</td><td>query</td><td></td><td>integer</td><td>Лимит записей</td></tr>
+                                    <tr><td>5</td><td>searchQ</td><td>query</td><td></td><td>string</td><td>Поисковый запрос</td></tr>
+                                    <tr><td>6</td><td>active</td><td>query</td><td></td><td>string</td><td>Фильтр по активности (true/false/all)</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>page</td><td>body</td><td></td><td>integer</td><td>Номер страницы</td></tr>
+                                    <tr><td>2</td><td>limit</td><td>body</td><td></td><td>integer</td><td>Лимит записей</td></tr>
+                                    <tr><td>3</td><td>count</td><td>body</td><td></td><td>integer</td><td>Количество записей</td></tr>
+                                    <tr><td>4</td><td>data</td><td>body</td><td>*</td><td>array</td><td>Массив задач</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Список задач получен</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Получить задачу по ID ========== -->
+            <h2>Детали задачи</h2>
+            <h3>GET /v1/Scheduler/backup/{staskId}/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+GET /v1/Scheduler/backup/123/
+x-jwt-token: <token>
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "name": "Daily Backup",
+  "description": "Backup every day at 2:00",
+  "schedType": "daily",
+  "scheduler": [{ "day": 0, "hour": 2, "min": 0 }],
+  "staskId": 123,
+  "ownerId": 1,
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5,
+  "valid": true,
+  "active": true
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>staskId</td><td>path</td><td>*</td><td>integer</td><td>ID задачи</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>name</td><td>body</td><td>*</td><td>string</td><td>Название задачи</td></tr>
+                                    <tr><td>2</td><td>description</td><td>body</td><td>*</td><td>string</td><td>Описание задачи</td></tr>
+                                    <tr><td>3</td><td>schedType</td><td>body</td><td>*</td><td>string</td><td>Тип расписания</td></tr>
+                                    <tr><td>4</td><td>scheduler</td><td>body</td><td>*</td><td>array</td><td>Массив расписаний</td></tr>
+                                    <tr><td>5</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи</td></tr>
+                                    <tr><td>6</td><td>ownerId</td><td>body</td><td>*</td><td>integer</td><td>ID владельца</td></tr>
+                                    <tr><td>7</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список клиентов</td></tr>
+                                    <tr><td>8</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>9</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                    <tr><td>10</td><td>valid</td><td>body</td><td>*</td><td>boolean</td><td>Валидность задачи</td></tr>
+                                    <tr><td>11</td><td>active</td><td>body</td><td></td><td>boolean</td><td>Активность задачи</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Детали задачи получены</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Обновить задачу ========== -->
+            <h2>Обновление задачи</h2>
+            <h3>PUT /v1/Scheduler/backup/{staskId}/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+PUT /v1/Scheduler/backup/123/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "name": "Daily Backup Updated",
+  "description": "Backup every day at 3:00",
+  "schedType": "daily",
+  "scheduler": [{ "day": 0, "hour": 3, "min": 0 }],
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "name": "Daily Backup Updated",
+  "description": "Backup every day at 3:00",
+  "schedType": "daily",
+  "scheduler": [{ "day": 0, "hour": 3, "min": 0 }],
+  "staskId": 123,
+  "ownerId": 1,
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5,
+  "valid": true,
+  "active": true
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>staskId</td><td>path</td><td>*</td><td>integer</td><td>ID задачи</td></tr>
+                                    <tr><td>2</td><td>name</td><td>body</td><td>*</td><td>string</td><td>Название задачи</td></tr>
+                                    <tr><td>3</td><td>description</td><td>body</td><td>*</td><td>string</td><td>Описание задачи</td></tr>
+                                    <tr><td>4</td><td>schedType</td><td>body</td><td>*</td><td>string</td><td>Тип расписания</td></tr>
+                                    <tr><td>5</td><td>scheduler</td><td>body</td><td>*</td><td>array</td><td>Массив расписаний</td></tr>
+                                    <tr><td>6</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список клиентов</td></tr>
+                                    <tr><td>7</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>8</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>name</td><td>body</td><td>*</td><td>string</td><td>Название задачи</td></tr>
+                                    <tr><td>2</td><td>description</td><td>body</td><td>*</td><td>string</td><td>Описание задачи</td></tr>
+                                    <tr><td>3</td><td>schedType</td><td>body</td><td>*</td><td>string</td><td>Тип расписания</td></tr>
+                                    <tr><td>4</td><td>scheduler</td><td>body</td><td>*</td><td>array</td><td>Массив расписаний</td></tr>
+                                    <tr><td>5</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи</td></tr>
+                                    <tr><td>6</td><td>ownerId</td><td>body</td><td>*</td><td>integer</td><td>ID владельца</td></tr>
+                                    <tr><td>7</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список клиентов</td></tr>
+                                    <tr><td>8</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>9</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                    <tr><td>10</td><td>valid</td><td>body</td><td>*</td><td>boolean</td><td>Валидность задачи</td></tr>
+                                    <tr><td>11</td><td>active</td><td>body</td><td></td><td>boolean</td><td>Активность задачи</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Задача обновлена</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Удаление задачи ========== -->
+            <h2>Удаление задачи</h2>
+            <h3>DELETE /v1/Scheduler/backup/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+DELETE /v1/Scheduler/backup/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "staskId": 123
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "result": "deleted"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи для удаления</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>result</td><td>body</td><td>*</td><td>string</td><td>Статус удаления</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Задача удалена</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Деактивация задачи ========== -->
+            <h2>Деактивация задачи</h2>
+            <h3>PATCH /v1/Scheduler/backup/deactivate/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+PATCH /v1/Scheduler/backup/deactivate/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "staskId": 123
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "result": "deactivated"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи для деактивации</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>result</td><td>body</td><td>*</td><td>string</td><td>Статус деактивации</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Задача деактивирована</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Активация задачи ========== -->
+            <h2>Активация задачи</h2>
+            <h3>PATCH /v1/Scheduler/backup/activate/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+PATCH /v1/Scheduler/backup/activate/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "staskId": 123
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "result": "activated"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>staskId</td><td>body</td><td>*</td><td>integer</td><td>ID задачи для активации</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>result</td><td>body</td><td>*</td><td>string</td><td>Статус активации</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Задача активирована</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Одноразовый запуск задачи резервного копирования ========== -->
+            <h2>Создание одноразовой задачи резервного копирования</h2>
+            <h3>POST /v1/Scheduler/backup/makeBackup/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+POST /v1/Scheduler/backup/makeBackup/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "clientList": [1,2],
+  "storageId": 10,
+  "backupDefId": 5
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "result": "backup started"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>clientList</td><td>body</td><td>*</td><td>array</td><td>Список ID клиентов</td></tr>
+                                    <tr><td>2</td><td>storageId</td><td>body</td><td>*</td><td>integer</td><td>ID хранилища</td></tr>
+                                    <tr><td>3</td><td>backupDefId</td><td>body</td><td>*</td><td>integer</td><td>ID определения бэкапа</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>result</td><td>body</td><td>*</td><td>string</td><td>Статус запуска задачи</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Задача запущена</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Создание задачи восстановления ========== -->
+            <h2>Создание задачи восстановления</h2>
+            <h3>POST /v1/Scheduler/restore/</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+POST /v1/Scheduler/restore/
+Content-Type: application/json
+x-jwt-token: <token>
+{
+  "clientId": 1,
+  "repoId": 2,
+  "repoFolder": "/backups",
+  "restoreData": {
+    "snapshotId": "abc123",
+    "targetPath": "/restore",
+    "recoverPath": "/recover"
+  }
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 201 Created
+Content-Type: application/json
+{
+  "result": "restore started"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>clientId</td><td>body</td><td>*</td><td>integer</td><td>ID клиента</td></tr>
+                                    <tr><td>2</td><td>repoId</td><td>body</td><td>*</td><td>integer</td><td>ID репозитория</td></tr>
+                                    <tr><td>3</td><td>repoFolder</td><td>body</td><td>*</td><td>string</td><td>Папка репозитория</td></tr>
+                                    <tr><td>4</td><td>restoreData</td><td>body</td><td>*</td><td>object</td><td>Параметры восстановления</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>result</td><td>body</td><td>*</td><td>string</td><td>Статус запуска задачи восстановления</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>201</td><td>Created</td><td>Задача восстановления создана</td></tr>
+                                    <tr><td>422</td><td>Validation Error</td><td>Ошибка валидации параметров</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br /></p>
+
+            <!-- ========== Healthcheck ========== -->
+            <h2>Healthcheck</h2>
+            <h3>GET /v1/Scheduler/healthcheck</h3>
+            <table class="fixed-table wrapped">
+                <tbody>
+                    <tr>
+                        <th>Запрос</th>
+                        <th>Ответ</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Request</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+GET /v1/Scheduler/healthcheck
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                        <td>
+                            <ac:structured-macro ac:name="code" ac:schema-version="1">
+                                <ac:parameter ac:name="title">Response</ac:parameter>
+                                <ac:plain-text-body><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "app_status": "App is up and running",
+  "db_status": "Database is up"
+}
+]]></ac:plain-text-body>
+                            </ac:structured-macro>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Параметры запроса</th>
+                        <th>Параметры ответа</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>№</th><th>Имя</th><th>Принадлежность</th><th>Обяз.</th><th>Тип</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>1</td><td>app_status</td><td>body</td><td>*</td><td>string</td><td>Статус приложения</td></tr>
+                                    <tr><td>2</td><td>db_status</td><td>body</td><td>*</td><td>string</td><td>Статус базы данных</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Коды ответов</th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="wrapped">
+                                <tbody>
+                                    <tr>
+                                        <th>HTTP код</th><th>Статус</th><th>Описание</th>
+                                    </tr>
+                                    <tr><td>200</td><td>OK</td><td>Сервис работает</td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><br
